@@ -4,7 +4,7 @@ def call(String environment, String action) {
             aws ec2 describe-instances \
                 --filters "Name=tag:Environment,Values=${environment}" "Name=instance-state-name,Values=stopped" \
                 --query 'Reservations[].Instances[].InstanceId' \
-                --output text | xargs -I {} aws ec2 start-instances --instance-ids {}
+                --output text | tr '\t' '\n' | xargs -n 1 aws ec2 start-instances --instance-ids
         """
     } 
     else if (action.toLowerCase() == "stop") {
@@ -12,7 +12,7 @@ def call(String environment, String action) {
             aws ec2 describe-instances \
                 --filters "Name=tag:Environment,Values=${environment}" "Name=instance-state-name,Values=running" \
                 --query 'Reservations[].Instances[].InstanceId' \
-                --output text | xargs -I {} aws ec2 stop-instances --instance-ids {}
+                --output text | tr '\t' '\n' | xargs -n 1 aws ec2 stop-instances --instance-ids
         """
     }
     else {
